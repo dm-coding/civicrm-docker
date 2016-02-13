@@ -48,6 +48,7 @@ CMS_DB_DSN="$DBTYPE://$CMS_DB_USER:$CMS_DB_PASS@$CMS_DB_HOST:$SQLPORT/$CMS_DB_NA
 sed -i 's/amp_install//g' /buildkit/app/config/$SITE_TYPE/install.sh
 
 # Hard-code some of our CMS DB params since they are set using docker environment variables and need to not be sanatised away when the installer runs...
+# They will be loaded into the build environment after a modification to line 728 of /buildkit/src/civibuild.lib.sh (see line 75)
 CONF="
     SITE_NAME=$SITE_NAME
     SITE_TYPE=$SITE_TYPE
