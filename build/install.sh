@@ -2,7 +2,7 @@
 export PATH=/buildkit/bin:$PATH
 
 # It's important that we only ever do this once.
-if [ -e /buildkit/civi.installed.lock ]
+if [ -e /buildkit/civi.installed.lock ]; then
     echo "Data Container: CiviCRM already installed."
     exit 0
 fi
