@@ -1,0 +1,39 @@
+web:
+        image: richarvey/nginx-php-fpm
+        container_name: civi_web
+        environment:
+                VIRTUAL_HOST: civicrm.example.com
+        volumes-from:
+                - app
+        ports:
+                - "80:80"
+        links:
+                - db
+app:
+        build: build
+        environment:
+                WEBROOT: /var/www/html
+                SITENAME: CiviCRM
+                SITEURL: localhost
+                SITEPORT: 80
+                ADMINPASS: 123
+                DBHOST: db
+        volumes:
+                - /var/www/html
+                - /var/lib/mysql
+        links:
+                - db
+        container_name: civi_build
+db:
+        image: mysql:5.5
+        expose:
+               - "3306"
+        restart: always
+        environment:
+                MYSQL_ROOT_PASSWORD: 32720283b5fb32
+                MYSQL_DATABASE: civi
+                MYSQL_USER: civi
+                MYSQL_PASSWORD: f90bff2494d
+        container_name: civ_db
+        volumes_from:
+                - app
