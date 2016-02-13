@@ -10,6 +10,8 @@ In contrast, this container is designed to be:
 
 * Useable -- every thing you need is here. Even email works out of the box (just modify the SSMTP configuration). Every runs automatically with docker-compose and requires no manual build steps.
 
+In particular it is superior to my other buildkit-based docker container in that it does not just "naively" run buildkit inside the docker environment.
+
 # Architecture
 
 This composition is made up of three separate containers:
