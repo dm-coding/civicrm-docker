@@ -10,7 +10,7 @@ In contrast, this container is designed to be:
 
 * Useable -- every thing you need is here. Even email works out of the box (just modify the SSMTP configuration). Every runs automatically with docker-compose and requires no manual build steps.
 
-In particular it is superior to my other buildkit-based docker container in that it does not just "naively" run buildkit inside the docker environment.
+In particular it is superior to my other buildkit-based docker container in that it does not just "naively" run buildkit inside the docker environment. However if you did need to run buildkit naively inside the Docker environment, this is probably the best container to use: https://github.com/djcf/civibuildkit-docker
 
 # Architecture
 
