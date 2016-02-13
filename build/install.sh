@@ -1,6 +1,12 @@
 #!/bin/bash
 export PATH=/buildkit/bin:$PATH
 
+# It's important that we only ever do this once.
+if [ -e /buildkit/civi.installed.lock ]
+    echo "Data Container: CiviCRM already installed."
+    exit 0
+fi
+
 if [ -z "$DBTYPE" ]; then
     DBTYPE=mysql
 fi
@@ -99,3 +105,5 @@ chown -R 33:33 $WEB_ROOT
 chown -R 33:33 /buildkit/app/private
 
 echo "Finished installing CiviCRM."
+
+touch /buildkit/civi.installed.lock
