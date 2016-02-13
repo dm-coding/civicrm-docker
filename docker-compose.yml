@@ -1,9 +1,10 @@
 web:
-        image: richarvey/nginx-php-fpm
+        build: web
         container_name: civi_web
         environment:
+                WEB_ROOT: /buildkit/build/CiviCRM
                 VIRTUAL_HOST: civicrm.example.com
-        volumes-from:
+        volumes_from:
                 - app
         ports:
                 - "80:80"
@@ -12,15 +13,20 @@ web:
 app:
         build: build
         environment:
-                WEBROOT: /var/www/html
-                SITENAME: CiviCRM
-                SITEURL: localhost
-                SITEPORT: 80
-                ADMINPASS: 123
-                DBHOST: db
+                WEBROOT: /buildkit/build/CiviCRM
+                CIVIVER: master
+                SITE_TYPE: drupal-clean
+                SITE_NAME: CiviCRM
+                CMS_URL: localhost
+                SITE_PORT: 80
+                SITE_PROTO: http
+                ADMIN_EMAIL: admin@example.com
+                ADMIN_PASS: 123
         volumes:
-                - /var/www/html
-                - /var/lib/mysql
+                - /buildkit/build/CiviCRM
+                - /etc/ssmtp
+        volumes_from:
+                - db
         links:
                 - db
         container_name: civi_build
@@ -35,5 +41,5 @@ db:
                 MYSQL_USER: civi
                 MYSQL_PASSWORD: f90bff2494d
         container_name: civ_db
-        volumes_from:
-                - app
+        volumes:
+                - /var/lib/mysql

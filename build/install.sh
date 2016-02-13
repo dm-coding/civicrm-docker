@@ -1,37 +1,65 @@
 #!/bin/bash
 export PATH=/buildkit/bin:$PATH
-WEB_ROOT=/buildkit/build/CiviCRM
 
-echo "Installing CiviCRM..."
+if [ -z "$DBTYPE" ]; then
+    DBTYPE=mysql
+fi
+if [ -z "$CMS_DB_USER" ]; then
+    CMS_DB_USER=$DB_ENV_MYSQL_USER
+fi
+if [ -z "$CMS_DB_PASS" ]; then
+    CMS_DB_PASS=$DB_ENV_MYSQL_PASSWORD
+fi
+if [ -z "$SQLROOTPSWD" ]; then
+    SQLROOTPSWD=$DB_ENV_MYSQL_ROOT_PASSWORD
+fi
+if [ -z "$SQLROOT" ]; then
+    SQLROOT=root
+fi
+if [ -z "$CMS_DB_PORT" ]; then
+    CMS_DB_PORT=3306
+fi
+if [ -z "$CMS_DB_NAME" ]; then
+    CMS_DB_NAME=$DB_ENV_MYSQL_DATABASE
+fi
+if [ -z "$CMS_DB_HOST" ]; then
+    CMS_DB_HOST=db
+fi
+if [ -z "$SITE_PROTO" ]; then
+    SITE_PROTO=http
+fi
+if [ -z "$WEB_ROOT" ]; then
+    WEB_ROOT=/buildkit/build/CiviCRM
+fi
+if [ -z "$UID" ]; then
+    UID=33
+fi
 
-# Tell amp the root DSN for the database
-amp config:set --mysql_dsn=mysql://root:ftf@mysql:3306/civi
+ROOTDSN="$DBTYPE://$SQLROOT:$SQLROOTPSWD@$CMS_DB_HOST:$SQLPORT/$CMS_DB_NAME"
+CMS_DB_DSN="$DBTYPE://$CMS_DB_USER:$CMS_DB_PASS@$CMS_DB_HOST:$SQLPORT/$CMS_DB_NAME"
 
 # Get rid of the amp_install function since docker manages our web and sql servers.
-sed -i 's/amp_install//g' /buildkit/app/config/drupal-clean/install.sh
+sed -i 's/amp_install//g' /buildkit/app/config/$SITE_TYPE/install.sh
 
-# Hard-code some of our CMS DB params since they will be set using docker environment variables...
-read -d '' CONF <<"EOF"
-    SITE_NAME=civi
-    SITE_TYPE=drupal-clean
-    WEB_ROOT=/buildkit/build/CiviCRM
-    ADMIN_EMAIL="admin@example.com"
-    ADMIN_PASS=123
-    CMS_URL=localhost
-    CMS_DB_DSN=mysql://civi:civi@mysql:3306/civi
-    CMS_DB_HOST=mysql
-    CMS_DB_PASS=civi
-    CMS_DB_PORT=3306
-    CMS_DB_USER=civi
-    CMS_DB_NAME=civi
-    CMS_DB_ARGS='-h mysql -u civi -pcivi -P 3306 civi'
-    CMS_TITLE=CiviCRM
-    CMS_ROOT=/buildkit/build/CiviCRM
-EOF
+# Hard-code some of our CMS DB params since they are set using docker environment variables and need to not be sanatised away when the installer runs...
+CONF="
+    SITE_NAME=$SITE_NAME
+    SITE_TYPE=$SITE_TYPE
+    WEB_ROOT=$WEB_ROOT
+    ADMIN_EMAIL="$ADMIN_EMAIL"
+    ADMIN_PASS=$ADMIN_PASS
+    CMS_URL=$CMS_URL
+    CMS_DB_DSN=$CMS_DB_DSN
+    CMS_DB_HOST=$CMS_DB_HOST
+    CMS_DB_PASS=$CMS_DB_PASS
+    CMS_DB_PORT=$CMS_DB_PORT
+    CMS_DB_USER=$CMS_DB_USER
+    CMS_DB_NAME=$CMS_DB_NAME
+    CMS_DB_ARGS='-h $CMS_DB_HOST -u $CMS_DB_USER -p$CMS_DB_PASS -P $CMS_DB_PORT $CMS_DB_NAME'
+    CMS_TITLE=$SITE_NAME
+    CMS_ROOT=$WEB_ROOT
+"
 echo "$CONF" > /buildkit/install.conf
-
-# ... but allow amp to configure the CiviCRM DB params.
-amp create -f --root="$WEB_ROOT" --name=civi --prefix=CIVI_ --skip-url >> /buildkit/install.conf
 
 # Experimental: Since amp *insists* on managing the civi database, we'd like to load its parameters back into our environment in the rare case of interactive administrator logon:
 echo "source /buildkit/install.conf" >> /root/.bashrc
@@ -39,21 +67,35 @@ echo "source /buildkit/install.conf" >> /root/.bashrc
 # Force the install script to recognise our new environment variables ^
 sed -i 's/function drupal_install() {/function drupal_install() {\n  source \/buildkit\/install.conf/g' /buildkit/src/civibuild.lib.sh
 
-# Stop bower from complaining when it runs as root
-echo '{ "allow_root": true }' > /root/.bowerrc
-
 # Fix this bug: http://drupal.stackexchange.com/questions/126880/how-do-i-prevent-drupal-raising-a-segmentation-fault-when-using-a-node-js-themin which is caused as a result of https://www.drupal.org/node/1917530
 rm -f /buildkit/build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/handlebars/coverage/lcov.info
 rm -f /./build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/cli-width/coverage/lcov.info
 #better:
 #find /buildkit -name '*.info' -type f | grep node_modules | xargs rm -f
 
-# Install application (with civibuild)
-civibuild install "CiviCRM" \
-  --url "http://localhost:80" \
-  --admin-pass "123" \
-  --web-root "/buildkit/build/CiviCRM"
+echo "Waiting for SQL container..."
+# The SQL container probably *isn't* ready for us yet, so we'll have to wait for it.
+while ! mysqladmin ping -h"$CMS_DB_HOST" --silent; do
+    sleep 1
+done
 
-# Should move to web server container
-# TODO: Only chown the directories which actually need to be writeable (will improve security)
-chown -R www-data:www-data /buildkit/build/CiviCRM
+# Tell amp the root DSN for the database
+amp config:set --mysql_dsn=$ROOTDSN
+
+# ... Allow amp to configure the CiviCRM DB params.
+amp create -f --root="$WEB_ROOT" --name="$CMS_DB_NAME" --prefix=CIVI_ --skip-url >> /buildkit/install.conf
+
+echo "SQL container ready; installing CiviCRM"
+
+# Install application (with civibuild)
+civibuild install "$SITE_NAME" \
+  --url "$SITE_PROTO://$CMS_URL:$CMS_DB_PORT" \
+  --admin-pass "$ADMIN_PASS" \
+  --admin-email "$ADMIN_EMAIL" \
+  --web-root "$WEB_ROOT"
+  
+# TODO: Make only the writeable directories owned by www-data (more secure)
+chown -R 33:33 $WEB_ROOT
+chown -R 33:33 /buildkit/app/private
+
+echo "Finished installing CiviCRM."
