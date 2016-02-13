@@ -95,6 +95,7 @@ echo "SQL container ready; installing CiviCRM"
 
 # Install application (with civibuild)
 civibuild install "$SITE_NAME" \
+  --type $SITE_TYPE \
   --url "$SITE_PROTO://$CMS_URL:$CMS_DB_PORT" \
   --admin-pass "$ADMIN_PASS" \
   --admin-email "$ADMIN_EMAIL" \
