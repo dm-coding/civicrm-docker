@@ -47,7 +47,10 @@ You may want to set up the installation first by configuring docker-compose.yml.
     ADMIN_PASS: 123
     ADMIN_EMAIL: admin@example.com
     SITE_TYPE=drupal-clean (this is the only one which has been tested)
+    PRIVATE_ROOT: /buildkit/app/private
 
+If you use a different web server container, you may need to adjust the file permissions of either the data container or the web server container. The file permissions for the data container are adjustable with the $GID and $UID variables.
+    
 In theory, you could also change the database type by setting environment variables in the docker-compose file. The environment variables match the ones the buildscript's installation script expects to find.
 
 # To-do

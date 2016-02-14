@@ -27,6 +27,7 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists
 
 VOLUME ["${WEB_ROOT:-/buildkit/build/CiviCRM}"]
+VOLUME ["${PRIVATE_ROOT:-/buildkit/app/private}"]
 VOLUME ["/etc/ssmtp"]
 
 CMD ["/usr/local/bin/install.sh"]

@@ -43,6 +43,9 @@ fi
 if [ -z "$GID" ]; then
     GID=33
 fi
+if [ -z "$PRIVATE_ROOT" ]; then
+    $PRIVATE_ROOT=/buildkit/app/private
+fi
 
 ROOTDSN="$DBTYPE://$SQLROOT:$SQLROOTPSWD@$CMS_DB_HOST:$SQLPORT/$CMS_DB_NAME"
 CMS_DB_DSN="$DBTYPE://$CMS_DB_USER:$CMS_DB_PASS@$CMS_DB_HOST:$SQLPORT/$CMS_DB_NAME"
@@ -107,7 +110,7 @@ civibuild install "$SITE_NAME" \
   
 # TODO: Make only the writeable directories owned by www-data (more secure)
 chown -R $UID:$GID $WEB_ROOT
-chown -R $UID:$GID /buildkit/app/private
+chown -R $UID:$GID $PRIVATE_ROOT
 
 echo "Finished installing CiviCRM."
 
