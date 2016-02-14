@@ -8,7 +8,7 @@ In contrast, this container is designed to be:
 
 * Composable -- most importantly, the web server and the SQL database server are kept in separate containers. This allows you to swap them out with other containers, modify their workings, or even scale them out to separate hosts.
 
-* Automateable -- every thing you need is here. Even email works out of the box (just modify the SSMTP configuration). Every runs automatically with docker-compose and requires no manual build steps.
+* Automateable -- the site is built with docker build and run with docker-compose. It requires no manual build steps.
 
 In particular it is superior to my other buildkit-based docker container in that it does not just "naively" run buildkit inside the docker environment. However if you did need to run buildkit naively inside the Docker environment, this is probably the best container to use: https://github.com/djcf/civibuildkit-docker
 
