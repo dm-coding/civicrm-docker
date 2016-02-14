@@ -22,7 +22,7 @@ This composition is made up of three separate containers:
 
 * The SQL container. We use the official mysql image for this, allowing you to use all of the Docker mysql patterns you are used to. For example:
 
-   $ docker run -it --link some-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+   $ docker run -it --link civi_db:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
    
 Find out more here: https://hub.docker.com/_/mysql/
 
