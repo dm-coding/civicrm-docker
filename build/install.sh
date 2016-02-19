@@ -81,10 +81,12 @@ echo "source /buildkit/install.conf" >> /root/.bashrc
 sed -i 's/function drupal_install() {/function drupal_install() {\n  source \/buildkit\/install.conf/g' /buildkit/src/civibuild.lib.sh
 
 # Fix this bug: http://drupal.stackexchange.com/questions/126880/how-do-i-prevent-drupal-raising-a-segmentation-fault-when-using-a-node-js-themin which is caused as a result of https://www.drupal.org/node/1917530
-rm -f /buildkit/build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/handlebars/coverage/lcov.info
-rm -f /./build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/cli-width/coverage/lcov.info
-#better:
-#find /buildkit -name '*.info' -type f | grep node_modules | xargs rm -f
+if [ "$SITE_TYPE" = "drupal-clean" ]
+    rm -f /buildkit/build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/handlebars/coverage/lcov.info
+    rm -f /./build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/cli-width/coverage/lcov.info
+    #better:
+    #find /buildkit -name '*.info' -type f | grep node_modules | xargs rm -f
+fi
 
 echo "Waiting for SQL container..."
 # The SQL container probably *isn't* ready for us yet, so we'll have to wait for it.
