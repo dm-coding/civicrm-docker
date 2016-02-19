@@ -15,7 +15,7 @@ app:
         build: build-d8
         environment:
                 WEBROOT: /buildkit/build/CiviCRM
-                CIVIVER: master
+                CIVIVER: d8-master
                 SITE_TYPE: drupal8-clean
                 SITE_NAME: CiviCRM
                 CMS_URL: civi.example.com

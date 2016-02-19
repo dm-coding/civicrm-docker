@@ -13,7 +13,7 @@ RUN git config --global url."https://".insteadOf "git://" && \
 # To install the maximal buildkit, do this instead:
 #    curl -Ls https://civicrm.org/get-buildkit.sh | bash -s -- --full --dir /buildkit
 RUN /buildkit/bin/civibuild download "${SITE_NAME:-CiviCRM}" \
-        --civi-ver "${CIVIVER:-master}" \
+        --civi-ver "${CIVIVER:-d8-master}" \
         --type "${SITE_TYPE:-drupal8-clean}" \
         --web-root "${WEB_ROOT:-/buildkit/build/CiviCRM}"
 RUN cd ${WEB_ROOT:-/buildkit/build/CiviCRM}/modules/civicrm && \
