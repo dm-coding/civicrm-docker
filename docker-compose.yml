@@ -17,14 +17,13 @@ app:
                 WEBROOT: /buildkit/build/CiviCRM
                 CIVIVER: master
                 SITE_TYPE: drupal8-clean
-                SITE_NAME: CommonSpace
-                CMS_URL: civi.common.scot
-                ADMIN_EMAIL: admin@common.scot
-                ADMIN_PASS: C0mm0nW3Al
+                SITE_NAME: CiviCRM
+                CMS_URL: civi.example.com
+                ADMIN_EMAIL: admin@example.com
+                ADMIN_PASS: 123
         volumes:
                 - /buildkit/build/CiviCRM
                 - /buildkit/app/private
-                - /etc/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf:ro
         volumes_from:
                 - db
         links:
@@ -36,10 +35,10 @@ db:
                - "3306"
         restart: always
         environment:
-                MYSQL_ROOT_PASSWORD: 32720283b5fb32
+                MYSQL_ROOT_PASSWORD: asdasdasd
                 MYSQL_DATABASE: civi
                 MYSQL_USER: civi
-                MYSQL_PASSWORD: f90bff2494d
+                MYSQL_PASSWORD: asdasdasdasd
         container_name: civi_db
         volumes:
                 - /var/lib/mysql:/var/lib/mysql/civi.common.scot
