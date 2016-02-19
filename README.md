@@ -32,6 +32,8 @@ In theory you could swap this for any database container which provides a databa
 
 $ git clone https://github.com/djcf/civicrm-docker; cd civicrm-docker
 
+Edit docker-compose.yml with your preferences. In particular, the paths are slightly different in d7/backdrop vs d8. If you are using d8, modify your docker-compose.yml such that the "build" directive references either build-d8 or, conversely, build-d7.
+
 $ docker-compose up
 
 You may want to set up the installation first by configuring docker-compose.yml. In particular, the following environment variables are exposed for you to customise:

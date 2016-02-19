@@ -12,18 +12,19 @@ web:
         links:
                 - db
 app:
-        build: build
+        build: build-d8
         environment:
                 WEBROOT: /buildkit/build/CiviCRM
                 CIVIVER: master
-                SITE_TYPE: drupal-clean
+                SITE_TYPE: drupal8-clean
                 SITE_NAME: CommonSpace
                 CMS_URL: civi.common.scot
                 ADMIN_EMAIL: admin@common.scot
                 ADMIN_PASS: C0mm0nW3Al
         volumes:
                 - /buildkit/build/CiviCRM
-                - /etc/ssmtp
+                - /buildkit/app/private
+                - /etc/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf:ro
         volumes_from:
                 - db
         links:
@@ -41,5 +42,4 @@ db:
                 MYSQL_PASSWORD: f90bff2494d
         container_name: civi_db
         volumes:
-                - /var/lib/mysql
-
+                - /var/lib/mysql:/var/lib/mysql/civi.common.scot
