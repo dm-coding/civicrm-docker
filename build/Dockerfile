@@ -11,7 +11,7 @@ ENV WEB_ROOT "/buildkit/build/CiviCRM"
 ENV CIVI_ROOT "/buildkit/build/CiviCRM/sites/all/modules/civicrm"
 
 RUN apt-get update
-RUN apt-get install -y wget curl git nano php5-cli mysql-client php5-curl php5-mcrypt php5-mysql php5-gd ssmtp npm nodejs-legacy --no-install-recommends && \
+RUN apt-get install -y wget curl git nano php5-cli mysql-client php5-curl php5-mcrypt php5-imap php5-mysql php5-gd ssmtp npm nodejs-legacy --no-install-recommends && \
     mkdir -p /root/.composer && \
     echo extension=mcrypt.so >> /etc/php5/cli/php.ini
 COPY config.json /root/.composer/config.json
