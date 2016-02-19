@@ -1,5 +1,15 @@
 FROM colstrom/fish:ubuntu
- 
+
+# For D8, use d8master
+ENV CIVIVER "master"
+
+# Use drupal-clean, drupal-demo, d8-clean, or d8-demo
+ENV SITE_TYPE "drupal-clean"
+ENV SITE_NAME "CiviCRM"
+ENV WEB_ROOT "/buildkit/build/CiviCRM"
+# For D8, use $WEB_ROOT/modules/civicrm
+ENV CIVI_ROOT "/buildkit/build/CiviCRM/sites/all/modules/civicrm"
+
 RUN apt-get update
 RUN apt-get install -y wget curl git nano php5-cli mysql-client php5-curl php5-mcrypt php5-mysql php5-gd ssmtp npm nodejs-legacy --no-install-recommends && \
     mkdir -p /root/.composer && \
@@ -16,11 +26,11 @@ RUN /buildkit/bin/civibuild download "${SITE_NAME:-CiviCRM}" \
         --civi-ver "${CIVIVER:-master}" \
         --type "${SITE_TYPE:-drupal-clean}" \
         --web-root "${WEB_ROOT:-/buildkit/build/CiviCRM}"
-RUN cd ${WEB_ROOT:-/buildkit/build/CiviCRM}/sites/all/modules/civicrm && \
+RUN cd ${CIVI_ROOT} && \
     /buildkit/bin/composer install
-RUN cd ${WEB_ROOT:-/buildkit/build/CiviCRM}/sites/all/modules/civicrm && \
+RUN cd ${CIVI_ROOT} && \
     npm install
-RUN cd ${WEB_ROOT:-/buildkit/build/CiviCRM}/sites/all/modules/civicrm && \
+RUN cd ${CIVI_ROOT} && \
     echo '{ "allow_root": true }' > /root/.bowerrc && \
     node /buildkit/node_modules/bower/bin/bower install -f
 RUN apt-get clean && \ 
