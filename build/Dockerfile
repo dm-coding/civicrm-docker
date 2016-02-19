@@ -1,6 +1,6 @@
 FROM colstrom/fish:ubuntu
 
-# For D8, use d8master
+# For D8, use d8master. For backdrop, use bmaster or bcmaster.
 ENV CIVIVER "master"
 
 # Use drupal-clean, drupal-demo, d8-clean, or d8-demo
@@ -23,9 +23,9 @@ RUN git config --global url."https://".insteadOf "git://" && \
 # To install the maximal buildkit, do this instead:
 #    curl -Ls https://civicrm.org/get-buildkit.sh | bash -s -- --full --dir /buildkit
 RUN /buildkit/bin/civibuild download "${SITE_NAME:-CiviCRM}" \
-        --civi-ver "${CIVIVER:-master}" \
-        --type "${SITE_TYPE:-drupal-clean}" \
-        --web-root "${WEB_ROOT:-/buildkit/build/CiviCRM}"
+        --civi-ver "${CIVIVER}" \
+        --type "${SITE_TYPE}" \
+        --web-root "${WEB_ROOT}"
 RUN cd ${CIVI_ROOT} && \
     /buildkit/bin/composer install
 RUN cd ${CIVI_ROOT} && \
@@ -33,10 +33,11 @@ RUN cd ${CIVI_ROOT} && \
 RUN cd ${CIVI_ROOT} && \
     echo '{ "allow_root": true }' > /root/.bowerrc && \
     node /buildkit/node_modules/bower/bin/bower install -f
-RUN apt-get clean && \ 
+RUN apt-get clean && \
+    rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists
 
-VOLUME ["${WEB_ROOT:-/buildkit/build/CiviCRM}"]
+VOLUME ["${WEB_ROOT}"]
 VOLUME ["${PRIVATE_ROOT:-/buildkit/app/private}"]
 VOLUME ["/etc/ssmtp"]
 
