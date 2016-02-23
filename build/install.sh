@@ -82,7 +82,7 @@ echo "source /buildkit/install.conf" >> /root/.bashrc
 sed -i 's/function drupal_install() {/function drupal_install() {\n  source \/buildkit\/install.conf/g' /buildkit/src/civibuild.lib.sh
 
 # Fix this bug: http://drupal.stackexchange.com/questions/126880/how-do-i-prevent-drupal-raising-a-segmentation-fault-when-using-a-node-js-themin which is caused as a result of https://www.drupal.org/node/1917530
-if [ "$SITE_TYPE" = "drupal-clean" ]; then 
+if [ "$SITE_TYPE" = "drupal-clean" ]; then
     rm -f /buildkit/build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/handlebars/coverage/lcov.info
     rm -f /./build/CiviCRM/sites/all/modules/civicrm/node_modules/bower/lib/node_modules/cli-width/coverage/lcov.info
     #better:
