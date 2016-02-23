@@ -33,6 +33,11 @@ RUN cd ${CIVI_ROOT} && \
 RUN cd ${CIVI_ROOT} && \
     echo '{ "allow_root": true }' > /root/.bowerrc && \
     node /buildkit/node_modules/bower/bin/bower install -f
+RUN cd /tmp && \
+    wget "https://download.civicrm.org/civicrm-4.7.2-l10n.tar.gz?src=donate" && \
+    tar -zxvf "civicrm-4.7.2-l10n.tar.gz?src=donate" && \
+    mv civicrm/sql/* $CIVI_ROOT/sql && \
+    mv civicrm/l10n $CIVI_ROOT
 RUN apt-get clean && \
     rm -rf /tmp/* && \
     rm -rf /var/lib/apt/lists
