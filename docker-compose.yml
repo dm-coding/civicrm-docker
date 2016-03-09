@@ -12,7 +12,7 @@ web:
         links:
                 - db
 app:
-        build: build-d8
+        build: build
         environment:
                 WEBROOT: /buildkit/build/CiviCRM
                 CIVIVER: master
