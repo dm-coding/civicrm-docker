@@ -4,19 +4,19 @@ web:
         container_name: civi_web
         environment:
                 WEB_ROOT: /buildkit/build/CiviCRM
-                VIRTUAL_HOST: civi.common.scot
+                VIRTUAL_HOST: host.example.com
         volumes_from:
                 - app
-        expose:
-                - "80"
+        ports:
+                - "8085"
         links:
                 - db
 app:
         build: build-d8
         environment:
                 WEBROOT: /buildkit/build/CiviCRM
-                CIVIVER: d8-master
-                SITE_TYPE: drupal8-clean
+                CIVIVER: master
+                SITE_TYPE: drupal-clean
                 SITE_NAME: CiviCRM
                 CMS_URL: civi.example.com
                 ADMIN_EMAIL: admin@example.com
@@ -41,4 +41,4 @@ db:
                 MYSQL_PASSWORD: asdasdasdasd
         container_name: civi_db
         volumes:
-                - /var/lib/mysql:/var/lib/mysql/civi.common.scot
+                - /var/lib/mysql:../mysql
