@@ -40,5 +40,3 @@ db:
                 MYSQL_USER: civi
                 MYSQL_PASSWORD: asdasdasdasd
         container_name: civi_db
-        volumes:
-                - /var/lib/mysql:../mysql
