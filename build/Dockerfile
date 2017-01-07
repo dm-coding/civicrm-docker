@@ -11,9 +11,13 @@ ENV WEB_ROOT "/buildkit/build/CiviCRM"
 ENV CIVI_ROOT "/buildkit/build/CiviCRM/sites/all/modules/civicrm"
 
 RUN apt-get update
-RUN apt-get install -y wget curl bzip2 git nano php5-cli mysql-client php5-curl php5-intl php5-mcrypt php5-imap php5-mysql php5-gd ssmtp npm nodejs-legacy --no-install-recommends && \
+RUN apt-get install -y wget curl bzip2 git nano php5-cli mysql-client php5-curl php5-intl php5-mcrypt php5-imap php5-mysql php5-gd ssmtp unzip zip --no-install-recommends && \
     mkdir -p /root/.composer && \
     echo extension=mcrypt.so >> /etc/php5/cli/php.ini
+
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+RUN apt-get install -y nodejs
+
 COPY config.json /root/.composer/config.json
 COPY install.sh /usr/local/bin/install.sh
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
